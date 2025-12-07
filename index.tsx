@@ -1,6 +1,6 @@
 
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom/client'; // Using createRoot for React 18+
 import App from './App';
 
 const rootElement = document.getElementById('root');
