@@ -1,29 +1,49 @@
 
+import { FeriaConfig, SaleRecord } from '../types';
+import { LOCAL_STORAGE_KEYS } from '../constants';
+
 export const localStorageService = {
-  getItem: <T,>(key: string): T | null => {
+  saveFeriaConfig: (config: FeriaConfig) => {
     try {
-      const item = localStorage.getItem(key);
-      return item ? (JSON.parse(item) as T) : null;
-    } catch (error) {
-      console.error(`Error parsing localStorage item for key "${key}":`, error);
+      localStorage.setItem(LOCAL_STORAGE_KEYS.FERIA_CONFIG, JSON.stringify(config));
+    } catch (e) {
+      console.error('Error saving feria config to localStorage', e);
+    }
+  },
+
+  loadFeriaConfig: (): FeriaConfig | null => {
+    try {
+      const configString = localStorage.getItem(LOCAL_STORAGE_KEYS.FERIA_CONFIG);
+      return configString ? (JSON.parse(configString) as FeriaConfig) : null;
+    } catch (e) {
+      console.error('Error loading feria config from localStorage', e);
       return null;
     }
   },
 
-  setItem: <T,>(key: string, value: T): void => {
+  saveSales: (sales: SaleRecord[]) => {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.error(`Error setting localStorage item for key "${key}":`, error);
+      localStorage.setItem(LOCAL_STORAGE_KEYS.SALES_DATA, JSON.stringify(sales));
+    } catch (e) {
+      console.error('Error saving sales data to localStorage', e);
     }
   },
 
-  removeItem: (key: string): void => {
+  loadSales: (): SaleRecord[] => {
     try {
-      localStorage.removeItem(key);
-    } catch (error) {
-      console.error(`Error removing localStorage item for key "${key}":`, error);
+      const salesString = localStorage.getItem(LOCAL_STORAGE_KEYS.SALES_DATA);
+      return salesString ? (JSON.parse(salesString) as SaleRecord[]) : [];
+    } catch (e) {
+      console.error('Error loading sales data from localStorage', e);
+      return [];
+    }
+  },
+
+  clearSales: () => {
+    try {
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.SALES_DATA);
+    } catch (e) {
+      console.error('Error clearing sales data from localStorage', e);
     }
   },
 };
-    

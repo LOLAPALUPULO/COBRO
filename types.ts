@@ -1,16 +1,23 @@
 
-export interface FeriaParams {
+export type UserRole = 'admin' | 'sales';
+
+export interface FeriaConfig {
   nombreFeria: string;
-  fechaFeria: string;
-  valorPintqa: number;
+  fechaInicio: string; // ISO date string e.g., 'YYYY-MM-DD'
+  fechaFin: string;   // ISO date string e.g., 'YYYY-MM-DD'
+  valorPinta: number;
   valorLitro: number;
-  ventasCerradas: boolean;
 }
 
-export interface SalesCounters {
-  digitalCount: number;
-  billeteCount: number;
-}
+export type TipoUnidad = 'Pinta' | 'Litro';
+export type TipoPago = '$ Digital' | '$ Billete';
 
-export type UserLevel = 'admin' | 'seller' | null;
-    
+export interface SaleRecord {
+  id: string; // Unique ID for each sale
+  fechaVenta: string; // ISO date string + time
+  tipoUnidad: TipoUnidad;
+  cantidadUnidades: number;
+  montoTotal: number;
+  tipoPago: TipoPago;
+  usuarioVenta: string; // Always 'lol' for sales user
+}

@@ -1,10 +1,16 @@
 
-export const ADMIN_PASSWORD = 'Registro';
-export const SELLER_PASSWORD = 'LolaPa';
+export const ADMIN_USER = 'regis';
+export const SALES_USER = 'lol';
 
-export const FERIA_PARAMS_KEY = 'feria_parametros';
-export const SALES_COUNTERS_KEY = 'registro_ventas';
+export enum LOCAL_STORAGE_KEYS {
+  FERIA_CONFIG = 'feriaConfig',
+  SALES_DATA = 'salesData',
+}
 
-export const DIGITAL_SOUND_URL = 'https://www.soundjay.com/misc/sounds/bell-ring-01.mp3'; // Example 'ding' sound
-export const BILLETE_SOUND_URL = 'https://www.soundjay.com/misc/sounds/cash-register-01.mp3'; // Example 'clank' sound (cash register)
-    
+// Base64 encoded audio for button clicks (very short, simple beeps)
+// These are minimal, pure tone WAV files, base64 encoded.
+// They are very small to avoid external file dependencies.
+// IMPORTANT: Replace with actual base64 audio data. This is a placeholder.
+export const DIGITAL_PAYMENT_SOUND_BASE64 = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+// IMPORTANT: Replace with actual base64 audio data. This is a placeholder.
+export const CASH_PAYMENT_SOUND_BASE64 = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';

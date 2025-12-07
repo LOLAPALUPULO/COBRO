@@ -1,49 +1,43 @@
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PWA Feria Ventas</title>
+    <title>Feria Sales Register</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Web App Manifest para PWA -->
-    <link rel="manifest" href="/manifest.json" />
-    <!-- Iconos para PWA (ejemplos, idealmente debes generar los tuyos) -->
-    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
-    <meta name="theme-color" content="#4f46e5" /> <!-- Color principal del tema, coincidiendo con el header -->
+    <!-- Custom Tailwind configuration for immediate use -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#10B981', // Emerald 500
+                        secondary: '#F59E0B', // Amber 500
+                        accent: '#EF4444', // Red 500
+                        darkbg: '#1F2937', // Gray 800
+                        lightbg: '#F3F4F6', // Gray 100
+                        textlight: '#F9FAFB', // Gray 50
+                        textdark: '#111827', // Gray 900
+                    }
+                }
+            }
+        }
+    </script>
 <script type="importmap">
 {
   "imports": {
     "react": "https://aistudiocdn.com/react@^19.2.1",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "vite": "https://aistudiocdn.com/vite@^7.2.6",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
+    "react/": "https://aistudiocdn.com/react@^19.2.1/"
   }
 }
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div id="root" class="w-full max-w-4xl min-h-screen bg-white shadow-lg rounded-lg md:rounded-xl overflow-hidden"></div>
-    <script type="module" src="./index.tsx"></script>
-    <!-- Registro del Service Worker para PWA -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js')
-            .then(registration => {
-              console.log('Service Worker registrado con éxito:', registration);
-            })
-            .catch(error => {
-              console.error('Fallo el registro del Service Worker:', error);
-            });
-        });
-      }
-    </script>
-<script type="module" src="/index.tsx"></script>
+<body class="bg-lightbg dark:bg-darkbg text-textdark dark:text-textlight min-h-screen flex items-center justify-center font-sans">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
 </body>
 </html>
-    
