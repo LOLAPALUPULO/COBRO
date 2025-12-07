@@ -7,6 +7,12 @@
     <title>PWA Feria Ventas</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Web App Manifest para PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <!-- Iconos para PWA (ejemplos, idealmente debes generar los tuyos) -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+    <meta name="theme-color" content="#4f46e5" /> <!-- Color principal del tema, coincidiendo con el header -->
 <script type="importmap">
 {
   "imports": {
@@ -23,6 +29,21 @@
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div id="root" class="w-full max-w-4xl min-h-screen bg-white shadow-lg rounded-lg md:rounded-xl overflow-hidden"></div>
     <script type="module" src="./index.tsx"></script>
+    <!-- Registro del Service Worker para PWA -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+              console.log('Service Worker registrado con éxito:', registration);
+            })
+            .catch(error => {
+              console.error('Fallo el registro del Service Worker:', error);
+            });
+        });
+      }
+    </script>
 <script type="module" src="/index.tsx"></script>
 </body>
 </html>
+    

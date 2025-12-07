@@ -1,10 +1,11 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useFeria } from '../contexts/FeriaContext';
 import { DIGITAL_SOUND_URL, BILLETE_SOUND_URL } from '../constants';
 
 const SellerPad: React.FC = () => {
   const { feriaParams, updateSalesCount } = useFeria();
+  const [lastSaleMessage, setLastSaleMessage] = useState<string>('');
 
   const digitalAudioRef = useRef<HTMLAudioElement | null>(null);
   const billeteAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -24,16 +25,18 @@ const SellerPad: React.FC = () => {
   const handleDigitalClick = () => {
     updateSalesCount('digital');
     playSound(digitalAudioRef);
+    setLastSaleMessage('Venta digital registrada.');
   };
 
   const handleBilleteClick = () => {
     updateSalesCount('billete');
     playSound(billeteAudioRef);
+    setLastSaleMessage('Venta en billete registrada.');
   };
 
   if (!feriaParams) {
     return (
-      <div className="text-center p-6 bg-yellow-50 rounded-lg shadow-lg border border-yellow-300">
+      <div className="text-center p-6 bg-yellow-50 rounded-lg shadow-lg border border-yellow-300" role="alert">
         <h2 className="text-2xl font-bold text-yellow-800 mb-4">Feria No Configurada</h2>
         <p className="text-gray-700">Por favor, espera a que el administrador configure los parámetros de la feria.</p>
       </div>
@@ -42,7 +45,7 @@ const SellerPad: React.FC = () => {
 
   if (feriaParams.ventasCerradas) {
     return (
-      <div className="text-center p-6 bg-red-50 rounded-lg shadow-lg border border-red-300">
+      <div className="text-center p-6 bg-red-50 rounded-lg shadow-lg border border-red-300" role="alert">
         <h2 className="text-2xl font-bold text-red-800 mb-4">Ventas Cerradas</h2>
         <p className="text-gray-700">Las ventas para esta feria han sido cerradas.</p>
       </div>
@@ -56,6 +59,7 @@ const SellerPad: React.FC = () => {
         <button
           onClick={handleDigitalClick}
           className="flex-1 flex flex-col items-center justify-center py-12 px-6 bg-gradient-to-r from-blue-600 to-indigo-700 text-white text-4xl font-extrabold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-75 transition duration-300 ease-in-out transform hover:scale-105"
+          aria-label="Registrar venta digital"
         >
           $ DIGITAL
           <span className="text-lg mt-2 font-medium">Click para venta digital</span>
@@ -63,10 +67,19 @@ const SellerPad: React.FC = () => {
         <button
           onClick={handleBilleteClick}
           className="flex-1 flex flex-col items-center justify-center py-12 px-6 bg-gradient-to-r from-green-600 to-teal-700 text-white text-4xl font-extrabold rounded-xl shadow-lg hover:from-green-700 hover:to-teal-800 focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-75 transition duration-300 ease-in-out transform hover:scale-105"
+          aria-label="Registrar venta en billete"
         >
           $ BILLETE
           <span className="text-lg mt-2 font-medium">Click para venta en billete</span>
         </button>
+      </div>
+      {/* Aria-live region para anunciar ventas a lectores de pantalla */}
+      <div
+        className="sr-only" // Oculto visualmente, pero disponible para lectores de pantalla
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {lastSaleMessage}
       </div>
     </div>
   );
