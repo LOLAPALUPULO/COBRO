@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Feria Sales Register</title>
+    <title>LOLAPALUPULO VENTAS</title> <!-- Updated Title -->
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Custom Tailwind configuration for immediate use -->
@@ -25,9 +25,9 @@
             }
         }
     </script>
-    <!-- Load React and ReactDOM as global variables from CDNs -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Load React and ReactDOM as global variables from CDNs (Production versions) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <!-- Include Babel for client-side JSX compilation -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <link rel="stylesheet" href="/index.css">
@@ -37,22 +37,22 @@
     <!-- Load your main application script with Babel type, containing all JSX components -->
     <script type="text/babel">
       // React and ReactDOM are now available globally, no need for import statements.
-      // Merged index.jsx, App.jsx, and all components here for client-side Babel transpilation.
-      // This ensures all JSX is processed by Babel before the browser executes it.
+      // All application logic is inlined here for client-side Babel transpilation.
 
-      // From constants.js (inlined)
+      // --- Constants (inlined) ---
       const ADMIN_USER = 'regis';
       const SALES_USER = 'lol';
 
       const LOCAL_STORAGE_KEYS = {
-        FERIA_CONFIG: 'feriaConfig',
-        SALES_DATA: 'salesData',
+        ACTIVE_FERIA_CONFIG: 'activeFeriaConfig', // Stores the current active feria config
+        ACTIVE_SALES_DATA: 'activeSalesData',     // Stores sales for the current active feria
+        FERIA_HISTORY: 'feriaHistory',            // Stores an array of HistoricalFeria objects
       };
 
-      const DIGITAL_PAYMENT_SOUND_BASE64 = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
-      const CASH_PAYMENT_SOUND_BASE64 = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+      const DIGITAL_PAYMENT_SOUND_BASE64 = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA='; // Placeholder for digital payment sound
+      const CASH_PAYMENT_SOUND_BASE64 = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA='; // Placeholder for cash payment sound
 
-      // From types.js (inlined)
+      // --- Types (inlined) ---
       const TipoUnidad = {
         Pinta: 'Pinta',
         Litro: 'Litro',
@@ -64,55 +64,111 @@
         Billete: '$ Billete',
       };
 
-      // From services/localStorageService.js (inlined)
+      // --- localStorageService (inlined) ---
       const localStorageService = {
-        saveFeriaConfig: (config) => {
+        saveActiveFeriaConfig: (config) => {
           try {
-            localStorage.setItem(LOCAL_STORAGE_KEYS.FERIA_CONFIG, JSON.stringify(config));
+            localStorage.setItem(LOCAL_STORAGE_KEYS.ACTIVE_FERIA_CONFIG, JSON.stringify(config));
           } catch (e) {
-            console.error('Error saving feria config to localStorage', e);
+            console.error('Error saving active feria config to localStorage', e);
           }
         },
 
-        loadFeriaConfig: () => {
+        loadActiveFeriaConfig: () => {
           try {
-            const configString = localStorage.getItem(LOCAL_STORAGE_KEYS.FERIA_CONFIG);
-            return configString ? (JSON.parse(configString)) : null;
+            const configString = localStorage.getItem(LOCAL_STORAGE_KEYS.ACTIVE_FERIA_CONFIG);
+            return configString ? JSON.parse(configString) : null;
           } catch (e) {
-            console.error('Error loading feria config from localStorage', e);
+            console.error('Error loading active feria config from localStorage', e);
             return null;
           }
         },
 
-        saveSales: (sales) => {
+        saveActiveSales: (sales) => {
           try {
-            localStorage.setItem(LOCAL_STORAGE_KEYS.SALES_DATA, JSON.stringify(sales));
+            localStorage.setItem(LOCAL_STORAGE_KEYS.ACTIVE_SALES_DATA, JSON.stringify(sales));
           } catch (e) {
-            console.error('Error saving sales data to localStorage', e);
+            console.error('Error saving active sales data to localStorage', e);
           }
         },
 
-        loadSales: () => {
+        loadActiveSales: () => {
           try {
-            const salesString = localStorage.getItem(LOCAL_STORAGE_KEYS.SALES_DATA);
-            return salesString ? (JSON.parse(salesString)) : [];
+            const salesString = localStorage.getItem(LOCAL_STORAGE_KEYS.ACTIVE_SALES_DATA);
+            return salesString ? JSON.parse(salesString) : [];
           } catch (e) {
-            console.error('Error loading sales data from localStorage', e);
+            console.error('Error loading active sales data from localStorage', e);
             return [];
           }
         },
 
-        clearSales: () => {
+        saveFeriaHistory: (history) => {
           try {
-            localStorage.removeItem(LOCAL_STORAGE_KEYS.SALES_DATA);
+            localStorage.setItem(LOCAL_STORAGE_KEYS.FERIA_HISTORY, JSON.stringify(history));
           } catch (e) {
-            console.error('Error clearing sales data from localStorage', e);
+            console.error('Error saving feria history to localStorage', e);
+          }
+        },
+
+        loadFeriaHistory: () => {
+          try {
+            const historyString = localStorage.getItem(LOCAL_STORAGE_KEYS.FERIA_HISTORY);
+            return historyString ? JSON.parse(historyString) : [];
+          } catch (e) {
+            console.error('Error loading feria history from localStorage', e);
+            return [];
+          }
+        },
+
+        clearActiveFeriaData: () => {
+          try {
+            localStorage.removeItem(LOCAL_STORAGE_KEYS.ACTIVE_FERIA_CONFIG);
+            localStorage.removeItem(LOCAL_STORAGE_KEYS.ACTIVE_SALES_DATA);
+          } catch (e) {
+            console.error('Error clearing active feria data from localStorage', e);
           }
         },
       };
 
-      // components/AuthScreen.jsx
-      const AuthScreen = ({ onLogin }) => {
+      // Helper function to calculate report summary
+      const calculateReportSummary = (feriaConfig, sales) => {
+        let totalPintas = 0;
+        let totalLitros = 0;
+        let montoTotalGeneral = 0;
+        let montoTotalDigital = 0;
+        let montoTotalBillete = 0;
+
+        sales.forEach((sale) => {
+          montoTotalGeneral += sale.montoTotal;
+          if (sale.tipoPago === TipoPago.Digital) {
+            montoTotalDigital += sale.montoTotal;
+          } else {
+            montoTotalBillete += sale.montoTotal;
+          }
+
+          if (sale.tipoUnidad === TipoUnidad.Pinta) {
+            totalPintas += sale.cantidadUnidades;
+          } else if (sale.tipoUnidad === TipoUnidad.Litro) {
+            totalLitros += sale.cantidadUnidades;
+          } else if (sale.tipoUnidad === TipoUnidad.Mixed) {
+              totalPintas += sale.cantidadUnidades / 2; // Approximation
+              totalLitros += sale.cantidadUnidades / 2; // Approximation
+          }
+        });
+
+        return {
+          totalPintas: Math.round(totalPintas),
+          totalLitros: Math.round(totalLitros),
+          montoTotalGeneral: parseFloat(montoTotalGeneral.toFixed(2)),
+          montoTotalDigital: parseFloat(montoTotalDigital.toFixed(2)),
+          montoTotalBillete: parseFloat(montoTotalBillete.toFixed(2)),
+        };
+      };
+
+      // --- Components ---
+
+      // AuthScreen.jsx
+      const AuthScreen = ({ onLogin, hasActiveFeria }) => {
         const [username, setUsername] = React.useState('');
         const [error, setError] = React.useState(null);
 
@@ -136,7 +192,7 @@
 
         return (
           <div className="flex flex-col items-center p-8 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600">
-            <h2 className="text-3xl font-bold text-primary mb-6">Feria Sales Register</h2>
+            <h2 className="text-3xl font-bold text-primary mb-6">LOLAPALUPULO VENTAS</h2> {/* Updated Title */}
             <p className="text-gray-700 dark:text-gray-300 mb-4">Por favor, ingresa tu usuario:</p>
             <input
               type="text"
@@ -167,40 +223,43 @@
               </button>
               <button
                 onClick={handleSalesLogin}
-                disabled={username !== SALES_USER}
+                disabled={username !== SALES_USER || !hasActiveFeria}
                 className={`w-full py-3 px-6 rounded-md font-semibold transition-colors duration-200 ${
-                  username === SALES_USER
+                  username === SALES_USER && hasActiveFeria
                     ? 'bg-secondary text-white hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2'
                     : 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed'
                 }`}
-                aria-disabled={username !== SALES_USER}
+                aria-disabled={username !== SALES_USER || !hasActiveFeria}
               >
                 Iniciar como Venta
               </button>
+              {username === SALES_USER && !hasActiveFeria && (
+                <p className="text-accent text-sm text-center" role="status">No hay ninguna feria activa. Contacta al administrador.</p>
+              )}
             </div>
           </div>
         );
       };
 
-      // components/Admin/FeriaConfigForm.jsx
-      const FeriaConfigForm = ({ feriaConfig, onSave }) => {
-        const [nombreFeria, setNombreFeria] = React.useState(feriaConfig?.nombreFeria || '');
-        const [fechaInicio, setFechaInicio] = React.useState(feriaConfig?.fechaInicio || '');
-        const [fechaFin, setFechaFin] = React.useState(feriaConfig?.fechaFin || '');
-        const [valorPinta, setValorPinta] = React.useState(feriaConfig?.valorPinta || 0);
-        const [valorLitro, setValorLitro] = React.useState(feriaConfig?.valorLitro || 0);
+      // FeriaConfigForm.jsx
+      const FeriaConfigForm = ({ activeFeriaConfig, onSave, onFinalizeFeria }) => {
+        const [nombreFeria, setNombreFeria] = React.useState(activeFeriaConfig?.nombreFeria || '');
+        const [fechaInicio, setFechaInicio] = React.useState(activeFeriaConfig?.fechaInicio || '');
+        const [fechaFin, setFechaFin] = React.useState(activeFeriaConfig?.fechaFin || '');
+        const [valorPinta, setValorPinta] = React.useState(activeFeriaConfig?.valorPinta || 0);
+        const [valorLitro, setValorLitro] = React.useState(activeFeriaConfig?.valorLitro || 0);
         const [feedbackMessage, setFeedbackMessage] = React.useState(null);
         const [isError, setIsError] = React.useState(false);
 
         React.useEffect(() => {
-          if (feriaConfig) {
-            setNombreFeria(feriaConfig.nombreFeria);
-            setFechaInicio(feriaConfig.fechaInicio);
-            setFechaFin(feriaConfig.fechaFin);
-            setValorPinta(feriaConfig.valorPinta);
-            setValorLitro(feriaConfig.valorLitro);
-          }
-        }, [feriaConfig]);
+          setNombreFeria(activeFeriaConfig?.nombreFeria || '');
+          setFechaInicio(activeFeriaConfig?.fechaInicio || '');
+          setFechaFin(activeFeriaConfig?.fechaFin || '');
+          setValorPinta(activeFeriaConfig?.valorPinta || 0);
+          setValorLitro(activeFeriaConfig?.valorLitro || 0);
+          setFeedbackMessage(null); // Clear feedback on config change
+          setIsError(false);
+        }, [activeFeriaConfig]);
 
         const handleSubmit = (e) => {
           e.preventDefault();
@@ -226,8 +285,17 @@
             valorLitro: parseFloat(valorLitro.toString()),
           };
           onSave(newConfig);
-          setFeedbackMessage('Configuración de la feria guardada con éxito.');
+          setFeedbackMessage(activeFeriaConfig ? 'Configuración de la feria activa actualizada con éxito.' : 'Nueva feria configurada y activada con éxito.');
           setTimeout(() => setFeedbackMessage(null), 3000);
+        };
+
+        const handleFinalizeClick = () => {
+          if (window.confirm('¿Estás seguro de que quieres finalizar la feria actual y archivar sus ventas? Esta acción no se puede deshacer.')) {
+            onFinalizeFeria();
+            setFeedbackMessage('Feria actual finalizada y archivada. Puedes configurar una nueva.');
+            setIsError(false);
+            setTimeout(() => setFeedbackMessage(null), 3000);
+          }
         };
 
         return (
@@ -238,6 +306,12 @@
                 {feedbackMessage}
               </div>
             )}
+
+            <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-md shadow-sm">
+                <p className="text-lg font-bold text-gray-800 dark:text-gray-200">
+                    Estado Actual: {activeFeriaConfig ? <span className="text-primary">Feria Activa: {activeFeriaConfig.nombreFeria}</span> : <span className="text-accent">No hay feria activa</span>}
+                </p>
+            </div>
 
             <div>
               <label htmlFor="nombreFeria" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -326,80 +400,52 @@
             >
               Guardar Configuración
             </button>
+            {activeFeriaConfig && (
+                <button
+                    type="button"
+                    onClick={handleFinalizeClick}
+                    className="w-full py-3 px-6 bg-accent text-white rounded-md font-semibold hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-colors duration-200 mt-2"
+                    aria-label="Finalizar la feria actual y archivar sus datos"
+                >
+                    Finalizar Feria Actual
+                </button>
+            )}
           </form>
         );
       };
 
-      // components/Admin/SalesReport.jsx
-      const SalesReport = ({ feriaConfig, sales, onClearSales }) => {
-        if (!feriaConfig) {
+      // SalesReport.jsx (now for Active Feria Report)
+      const SalesReport = ({ activeFeriaConfig, activeSales, onFinalizeFeria }) => {
+        if (!activeFeriaConfig) {
           return (
             <div className="p-6 text-center text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded-md">
               <p className="text-xl font-medium mb-4">¡Atención Administrador!</p>
-              <p>Por favor, configura la feria primero para poder ver los reportes de ventas.</p>
-              <p className="mt-2 text-sm">Navega a la pestaña "Configurar Feria".</p>
+              <p>No hay ninguna feria activa para mostrar el reporte.</p>
+              <p className="mt-2 text-sm">Navega a la pestaña "Configurar Feria" para iniciar una nueva.</p>
             </div>
           );
         }
 
-        const calculateReport = () => {
-          let totalPintas = 0;
-          let totalLitros = 0;
-          let montoTotalGeneral = 0;
-          let montoTotalDigital = 0;
-          let montoTotalBillete = 0;
-
-          sales.forEach((sale) => {
-            montoTotalGeneral += sale.montoTotal;
-            if (sale.tipoPago === TipoPago.Digital) {
-              montoTotalDigital += sale.montoTotal;
-            } else {
-              montoTotalBillete += sale.montoTotal;
-            }
-
-            if (sale.tipoUnidad === TipoUnidad.Pinta) {
-              totalPintas += sale.cantidadUnidades;
-            } else if (sale.tipoUnidad === TipoUnidad.Litro) {
-              totalLitros += sale.cantidadUnidades;
-            } else if (sale.tipoUnidad === TipoUnidad.Mixed) {
-                // When 'Mixed', cantidadUnidades represents the sum of pintas and litros.
-                // For reporting, we'll split them evenly. A more precise solution would
-                // require storing original pinta/litro counts within the mixed sale record.
-                // For simplicity here, we'll assume an average split if not explicitly recorded.
-                totalPintas += sale.cantidadUnidades / 2; // Approximation
-                totalLitros += sale.cantidadUnidades / 2; // Approximation
-            }
-          });
-
-          return {
-            totalPintas: Math.round(totalPintas),
-            totalLitros: Math.round(totalLitros),
-            montoTotalGeneral: montoTotalGeneral.toFixed(2),
-            montoTotalDigital: montoTotalDigital.toFixed(2),
-            montoTotalBillete: montoTotalBillete.toFixed(2),
-          };
-        };
-
-        const report = calculateReport();
+        const report = calculateReportSummary(activeFeriaConfig, activeSales);
 
         return (
-          <div className="space-y-6" aria-labelledby="sales-report-title">
-            <h3 id="sales-report-title" className="text-2xl font-semibold text-textdark dark:text-textlight mb-4">Reporte de Ventas</h3>
-            <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-md shadow-sm" role="region" aria-label="Información de la Feria">
+          <div className="space-y-6" aria-labelledby="active-sales-report-title">
+            <h3 id="active-sales-report-title" className="text-2xl font-semibold text-textdark dark:text-textlight mb-4">Reporte de Feria Activa</h3>
+            <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-md shadow-sm" role="region" aria-label="Información de la Feria Activa">
               <p className="text-lg font-bold text-gray-800 dark:text-gray-200">
-                Feria: <span className="text-primary">{feriaConfig.nombreFeria}</span>
+                Feria: <span className="text-primary">{activeFeriaConfig.nombreFeria}</span>
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Periodo: {feriaConfig.fechaInicio} al {feriaConfig.fechaFin}
+                Periodo: {activeFeriaConfig.fechaInicio} al {activeFeriaConfig.fechaFin}
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Valor Pinta: ${feriaConfig.valorPinta.toFixed(2)} | Valor Litro: ${feriaConfig.valorLitro.toFixed(2)}
+                Valor Pinta: ${activeFeriaConfig.valorPinta.toFixed(2)} | Valor Litro: ${activeFeriaConfig.valorLitro.toFixed(2)}
               </p>
             </div>
 
-            {sales.length === 0 ? (
+            {activeSales.length === 0 ? (
               <div className="p-6 text-center text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded-md" role="status">
-                <p className="text-xl font-medium">No hay ventas registradas para esta feria aún.</p>
+                <p className="text-xl font-medium">No hay ventas registradas para esta feria activa aún.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4" role="group" aria-labelledby="sales-summary-title">
@@ -417,42 +463,207 @@
                 <div className="bg-white dark:bg-gray-700 p-4 rounded-md shadow" role="region" aria-label="Monto Total Recaudado">
                   <h4 className="font-semibold text-lg mb-2 text-textdark dark:text-textlight">Monto Total Recaudado</h4>
                   <p className="text-gray-700 dark:text-gray-300">
-                    Total General: <span className="font-bold text-primary">${report.montoTotalGeneral}</span>
+                    Total General: <span className="font-bold text-primary">${report.montoTotalGeneral.toFixed(2)}</span>
                   </p>
                   <p className="text-gray-700 dark:text-gray-300">
-                    Total Digital: <span className="font-bold text-secondary">${report.montoTotalDigital}</span>
+                    Total Digital: <span className="font-bold text-secondary">${report.montoTotalDigital.toFixed(2)}</span>
                   </p>
                   <p className="text-gray-700 dark:text-gray-300">
-                    Total Billete: <span className="font-bold text-amber-700 dark:text-amber-300">${report.montoTotalBillete}</span>
+                    Total Billete: <span className="font-bold text-amber-700 dark:text-amber-300">${report.montoTotalBillete.toFixed(2)}</span>
                   </p>
                 </div>
               </div>
             )}
 
             <button
-              onClick={onClearSales}
+              onClick={() => {
+                if (window.confirm('¿Estás seguro de que quieres finalizar la feria actual y archivar sus ventas? Esta acción no se puede deshacer.')) {
+                  onFinalizeFeria();
+                }
+              }}
               className="w-full py-3 px-6 bg-accent text-white rounded-md font-semibold hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-colors duration-200 mt-6"
-              disabled={sales.length === 0}
-              aria-disabled={sales.length === 0}
+              disabled={!activeFeriaConfig}
+              aria-disabled={!activeFeriaConfig}
             >
-              Cerrar Ventas y Reiniciar
+              Finalizar Feria Actual y Archivar
             </button>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center" role="note">
-              Advertencia: Cerrar ventas borrará todos los registros de ventas actuales.
+              Advertencia: Finalizar la feria archivará sus datos y borrará los registros de ventas activos.
             </p>
           </div>
         );
       };
 
-      // components/Admin/AdminDashboard.jsx
+      // FeriaHistoryList.jsx (New component for Admin Dashboard)
+      const FeriaHistoryList = ({ feriaHistory, onActivateFeria, onShowReport }) => {
+        if (feriaHistory.length === 0) {
+          return (
+            <div className="p-6 text-center text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded-md">
+              <p className="text-xl font-medium">No hay ferias archivadas aún.</p>
+              <p className="mt-2 text-sm">Finaliza una feria en la pestaña "Configurar Feria" para verla aquí.</p>
+            </div>
+          );
+        }
+
+        return (
+          <div className="space-y-6" aria-labelledby="history-title">
+            <h3 id="history-title" className="text-2xl font-semibold text-textdark dark:text-textlight mb-4">Historial de Ferias</h3>
+            <ul className="space-y-4">
+              {feriaHistory.map((feria) => (
+                <li key={feria.id} className="bg-white dark:bg-gray-700 p-4 rounded-md shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div>
+                    <p className="text-lg font-bold text-primary">{feria.config.nombreFeria}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {feria.config.fechaInicio} al {feria.config.fechaFin} (Archivado: {new Date(feria.archivedAt).toLocaleDateString()})
+                    </p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                      Total Recaudado: <span className="font-semibold text-secondary">${feria.reportSummary.montoTotalGeneral.toFixed(2)}</span>
+                    </p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                    <button
+                      onClick={() => onShowReport(feria)}
+                      className="py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-colors duration-200 text-sm"
+                      aria-label={`Ver reporte detallado de ${feria.config.nombreFeria}`}
+                    >
+                      Ver Reporte
+                    </button>
+                    <button
+                      onClick={() => onActivateFeria(feria.id)}
+                      className="py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition-colors duration-200 text-sm"
+                      aria-label={`Activar ${feria.config.nombreFeria} como feria actual`}
+                    >
+                      Activar
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      };
+
+      // HistoricalFeriaReportModal.jsx (New component for viewing historical reports)
+      const HistoricalFeriaReportModal = ({ feria, onClose }) => {
+        const report = calculateReportSummary(feria.config, feria.sales);
+
+        return (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center border-b pb-3 mb-4 border-gray-200 dark:border-gray-600">
+                <h3 id="modal-title" className="text-2xl font-bold text-primary">Reporte Histórico: {feria.config.nombreFeria}</h3>
+                <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl" aria-label="Cerrar reporte">
+                  &times;
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-md shadow-sm">
+                  <p className="text-lg font-bold text-gray-800 dark:text-gray-200">
+                    Feria: <span className="text-primary">{feria.config.nombreFeria}</span>
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Periodo: {feria.config.fechaInicio} al {feria.config.fechaFin}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Valor Pinta: ${feria.config.valorPinta.toFixed(2)} | Valor Litro: ${feria.config.valorLitro.toFixed(2)}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Archivada el: {new Date(feria.archivedAt).toLocaleDateString()}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-white dark:bg-gray-700 p-4 rounded-md shadow">
+                    <h4 className="font-semibold text-lg mb-2 text-textdark dark:text-textlight">Cantidades Vendidas</h4>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      Total Pintas: <span className="font-bold text-primary">{report.totalPintas}</span>
+                    </p>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      Total Litros: <span className="font-bold text-primary">{report.totalLitros}</span>
+                    </p>
+                  </div>
+
+                  <div className="bg-white dark:bg-gray-700 p-4 rounded-md shadow">
+                    <h4 className="font-semibold text-lg mb-2 text-textdark dark:text-textlight">Monto Total Recaudado</h4>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      Total General: <span className="font-bold text-primary">${report.montoTotalGeneral.toFixed(2)}</span>
+                    </p>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      Total Digital: <span className="font-bold text-secondary">${report.montoTotalDigital.toFixed(2)}</span>
+                    </p>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      Total Billete: <span className="font-bold text-amber-700 dark:text-amber-300">${report.montoTotalBillete.toFixed(2)}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <h4 className="font-semibold text-lg mt-4 text-textdark dark:text-textlight">Detalle de Ventas ({feria.sales.length})</h4>
+                {feria.sales.length > 0 ? (
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full bg-white dark:bg-gray-700 rounded-md shadow">
+                            <thead>
+                                <tr className="bg-gray-100 dark:bg-gray-600 text-textdark dark:text-textlight text-left text-sm font-semibold">
+                                    <th className="py-2 px-4">Fecha</th>
+                                    <th className="py-2 px-4">Unidad</th>
+                                    <th className="py-2 px-4">Cantidad</th>
+                                    <th className="py-2 px-4">Monto</th>
+                                    <th className="py-2 px-4">Pago</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {feria.sales.map((sale) => (
+                                    <tr key={sale.id} className="border-t border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm">
+                                        <td className="py-2 px-4">{new Date(sale.fechaVenta).toLocaleString()}</td>
+                                        <td className="py-2 px-4">{sale.tipoUnidad}</td>
+                                        <td className="py-2 px-4">{sale.cantidadUnidades}</td>
+                                        <td className="py-2 px-4">${sale.montoTotal.toFixed(2)}</td>
+                                        <td className="py-2 px-4">{sale.tipoPago}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p className="text-gray-600 dark:text-gray-400">No hay ventas detalladas para esta feria archivada.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // AdminDashboard.jsx
       const AdminDashboard = ({
-        feriaConfig,
-        sales,
+        activeFeriaConfig,
+        activeSales,
+        feriaHistory,
         onUpdateFeriaConfig,
-        onClearSales,
+        onFinalizeFeria,
+        onActivateHistoricalFeria,
         onLogout,
       }) => {
-        const [view, setView] = React.useState(feriaConfig ? 'report' : 'config');
+        const [view, setView] = React.useState(activeFeriaConfig ? 'report' : 'config');
+        const [showHistoricalReportModal, setShowHistoricalReportModal] = React.useState(false);
+        const [selectedHistoricalFeria, setSelectedHistoricalFeria] = React.useState(null);
+
+        React.useEffect(() => {
+            // If activeFeriaConfig changes (e.g., gets archived),
+            // and the current view is 'report', switch to 'config' if no active feria
+            if (!activeFeriaConfig && view === 'report') {
+                setView('config');
+            }
+        }, [activeFeriaConfig, view]);
+
+        const handleShowHistoricalReport = (feria) => {
+          setSelectedHistoricalFeria(feria);
+          setShowHistoricalReportModal(true);
+        };
+
+        const handleCloseHistoricalReport = () => {
+          setShowHistoricalReportModal(false);
+          setSelectedHistoricalFeria(null);
+        };
 
         return (
           <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600">
@@ -467,9 +678,11 @@
               </button>
             </div>
 
-            <div className="flex space-x-4 mb-6" role="tablist">
+            <div className="flex flex-wrap gap-2 mb-6" role="tablist">
               <button
                 role="tab"
+                id="tab-config"
+                aria-controls="panel-config"
                 aria-selected={view === 'config'}
                 onClick={() => setView('config')}
                 className={`py-2 px-4 rounded-md font-semibold transition-colors duration-200 ${
@@ -482,6 +695,8 @@
               </button>
               <button
                 role="tab"
+                id="tab-report"
+                aria-controls="panel-report"
                 aria-selected={view === 'report'}
                 onClick={() => setView('report')}
                 className={`py-2 px-4 rounded-md font-semibold transition-colors duration-200 ${
@@ -490,23 +705,58 @@
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                 }`}
               >
-                Ver Reporte
+                Reporte de Feria Activa
+              </button>
+              <button
+                role="tab"
+                id="tab-history"
+                aria-controls="panel-history"
+                aria-selected={view === 'history'}
+                onClick={() => setView('history')}
+                className={`py-2 px-4 rounded-md font-semibold transition-colors duration-200 ${
+                  view === 'history'
+                    ? 'bg-primary text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                Historial de Ferias
               </button>
             </div>
 
-            <div role="tabpanel" aria-labelledby={`tab-${view}`}>
+            <div id={`panel-${view}`} role="tabpanel" aria-labelledby={`tab-${view}`}>
               {view === 'config' ? (
-                <FeriaConfigForm feriaConfig={feriaConfig} onSave={onUpdateFeriaConfig} />
+                <FeriaConfigForm
+                  activeFeriaConfig={activeFeriaConfig}
+                  onSave={onUpdateFeriaConfig}
+                  onFinalizeFeria={onFinalizeFeria}
+                />
+              ) : view === 'report' ? (
+                <SalesReport
+                  activeFeriaConfig={activeFeriaConfig}
+                  activeSales={activeSales}
+                  onFinalizeFeria={onFinalizeFeria}
+                />
               ) : (
-                <SalesReport feriaConfig={feriaConfig} sales={sales} onClearSales={onClearSales} />
+                <FeriaHistoryList
+                  feriaHistory={feriaHistory}
+                  onActivateFeria={onActivateHistoricalFeria}
+                  onShowReport={handleShowHistoricalReport}
+                />
               )}
             </div>
+
+            {showHistoricalReportModal && selectedHistoricalFeria && (
+              <HistoricalFeriaReportModal
+                feria={selectedHistoricalFeria}
+                onClose={handleCloseHistoricalReport}
+              />
+            )}
           </div>
         );
       };
 
-      // components/Sales/SalesTPV.jsx
-      const SalesTPV = ({ feriaConfig, onAddSale, onLogout }) => {
+      // SalesTPV.jsx
+      const SalesTPV = ({ activeFeriaConfig, onAddSale, onLogout }) => {
         const [pintaCount, setPintaCount] = React.useState(0);
         const [litroCount, setLitroCount] = React.useState(0);
         const [showLoadedMessage, setShowLoadedMessage] = React.useState(false);
@@ -526,12 +776,12 @@
           }
         }, []);
 
-        if (!feriaConfig) {
+        if (!activeFeriaConfig) {
           return (
             <div className="flex flex-col items-center p-8 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600">
               <h2 className="text-3xl font-bold text-secondary mb-6">TPV de Ventas</h2>
               <p className="text-lg text-gray-700 dark:text-gray-300 mb-6 text-center">
-                La feria no ha sido configurada por el administrador. Por favor, espera a que se configure para poder registrar ventas.
+                No hay ninguna feria activa. Por favor, contacta al administrador.
               </p>
               <button
                 onClick={onLogout}
@@ -545,7 +795,7 @@
         }
 
         const calculatePartialTotal = () => {
-          return (pintaCount * feriaConfig.valorPinta + litroCount * feriaConfig.valorLitro).toFixed(2);
+          return (pintaCount * activeFeriaConfig.valorPinta + litroCount * activeFeriaConfig.valorLitro).toFixed(2);
         };
 
         const handleRegisterSale = (tipoPago) => {
@@ -592,7 +842,7 @@
             </div>
 
             <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">
-              Feria actual: <span className="font-semibold text-primary">{feriaConfig.nombreFeria}</span>
+              Feria actual: <span className="font-semibold text-primary">{activeFeriaConfig.nombreFeria}</span>
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
@@ -605,7 +855,7 @@
                     aria-label={`Añadir una pinta. Cantidad actual: ${pintaCount}`}
                   >
                     <span className="text-2xl font-bold">PINTA</span>
-                    <span className="text-sm">(${feriaConfig.valorPinta.toFixed(2)})</span>
+                    <span className="text-sm">(${activeFeriaConfig.valorPinta.toFixed(2)})</span>
                     <span className="text-4xl font-extrabold mt-2" aria-live="polite">{pintaCount}</span>
                   </button>
                   <button
@@ -614,7 +864,7 @@
                     aria-label={`Añadir un litro. Cantidad actual: ${litroCount}`}
                   >
                     <span className="text-2xl font-bold">LITRO</span>
-                    <span className="text-sm">(${feriaConfig.valorLitro.toFixed(2)})</span>
+                    <span className="text-sm">(${activeFeriaConfig.valorLitro.toFixed(2)})</span>
                     <span className="text-4xl font-extrabold mt-2" aria-live="polite">{litroCount}</span>
                   </button>
                 </div>
@@ -673,34 +923,40 @@
         );
       };
 
-
       // App.jsx (main application component)
       function App() {
         const [userRole, setUserRole] = React.useState(null);
-        const [feriaConfig, setFeriaConfig] = React.useState(null);
-        const [sales, setSales] = React.useState([]);
+        const [activeFeriaConfig, setActiveFeriaConfig] = React.useState(null);
+        const [activeSales, setActiveSales] = React.useState([]);
+        const [feriaHistory, setFeriaHistory] = React.useState([]);
         const [loading, setLoading] = React.useState(true);
 
         // Load initial data from localStorage
         React.useEffect(() => {
-          const storedConfig = localStorageService.loadFeriaConfig();
-          const storedSales = localStorageService.loadSales();
-          setFeriaConfig(storedConfig);
-          setSales(storedSales);
+          const storedActiveConfig = localStorageService.loadActiveFeriaConfig();
+          const storedActiveSales = localStorageService.loadActiveSales();
+          const storedFeriaHistory = localStorageService.loadFeriaHistory();
+
+          setActiveFeriaConfig(storedActiveConfig);
+          setActiveSales(storedActiveSales);
+          setFeriaHistory(storedFeriaHistory);
           setLoading(false);
         }, []);
 
-        // Update localStorage whenever feriaConfig changes
+        // Update localStorage whenever activeFeriaConfig changes
         React.useEffect(() => {
-          if (feriaConfig) {
-            localStorageService.saveFeriaConfig(feriaConfig);
-          }
-        }, [feriaConfig]);
+          localStorageService.saveActiveFeriaConfig(activeFeriaConfig);
+        }, [activeFeriaConfig]);
 
-        // Update localStorage whenever sales change
+        // Update localStorage whenever activeSales changes
         React.useEffect(() => {
-          localStorageService.saveSales(sales);
-        }, [sales]);
+          localStorageService.saveActiveSales(activeSales);
+        }, [activeSales]);
+
+        // Update localStorage whenever feriaHistory changes
+        React.useEffect(() => {
+          localStorageService.saveFeriaHistory(feriaHistory);
+        }, [feriaHistory]);
 
         const handleLogin = React.useCallback((role) => {
           setUserRole(role);
@@ -710,18 +966,57 @@
           setUserRole(null);
         }, []);
 
-        const handleUpdateFeriaConfig = React.useCallback((config) => {
-          setFeriaConfig(config);
-        }, []);
+        // Admin actions
+        const handleUpdateFeriaConfig = React.useCallback((newConfig) => {
+          setActiveFeriaConfig(newConfig);
+          // If this is a new config and sales were cleared, ensure they are reset.
+          if (!activeFeriaConfig) {
+            setActiveSales([]);
+          }
+        }, [activeFeriaConfig]);
 
         const handleAddSale = React.useCallback((newSale) => {
-          setSales((prevSales) => [...prevSales, newSale]);
+          setActiveSales((prevSales) => [...prevSales, newSale]);
         }, []);
 
-        const handleClearSales = React.useCallback(() => {
-          setSales([]);
-          localStorageService.clearSales();
-        }, []);
+        const archiveCurrentFeria = React.useCallback(() => {
+          if (activeFeriaConfig) {
+            const reportSummary = calculateReportSummary(activeFeriaConfig, activeSales);
+            const newHistoricalFeria = {
+              id: crypto.randomUUID(),
+              config: activeFeriaConfig,
+              sales: activeSales,
+              reportSummary: reportSummary,
+              archivedAt: new Date().toISOString(),
+            };
+
+            setFeriaHistory((prevHistory) => [...prevHistory, newHistoricalFeria]);
+            setActiveFeriaConfig(null);
+            setActiveSales([]);
+            localStorageService.clearActiveFeriaData(); // Clear from local storage
+          }
+        }, [activeFeriaConfig, activeSales, setFeriaHistory, setActiveFeriaConfig, setActiveSales]);
+
+
+        const activateHistoricalFeria = React.useCallback((feriaId) => {
+            if (activeFeriaConfig) {
+                if (!window.confirm('Hay una feria activa actualmente. ¿Deseas finalizarla y archivarla antes de activar una del historial?')) {
+                    return; // User cancelled
+                }
+                archiveCurrentFeria(); // Archive current active feria first
+            }
+
+            const historicalEntryIndex = feriaHistory.findIndex(f => f.id === feriaId);
+            if (historicalEntryIndex !== -1) {
+                const [feriaToActivate] = feriaHistory.splice(historicalEntryIndex, 1); // Remove from history
+                setFeriaHistory([...feriaHistory]); // Update history state
+
+                setActiveFeriaConfig(feriaToActivate.config);
+                setActiveSales(feriaToActivate.sales);
+                // localStorageService will automatically save these via useEffects
+            }
+        }, [activeFeriaConfig, feriaHistory, setFeriaHistory, setActiveFeriaConfig, setActiveSales, archiveCurrentFeria]);
+
 
         if (loading) {
           return (
@@ -735,18 +1030,20 @@
         return (
           <div className="w-full max-w-4xl p-6 bg-white dark:bg-gray-700 shadow-lg rounded-xl">
             {!userRole ? (
-              <AuthScreen onLogin={handleLogin} />
+              <AuthScreen onLogin={handleLogin} hasActiveFeria={!!activeFeriaConfig} />
             ) : userRole === 'admin' ? (
               <AdminDashboard
-                feriaConfig={feriaConfig}
-                sales={sales}
+                activeFeriaConfig={activeFeriaConfig}
+                activeSales={activeSales}
+                feriaHistory={feriaHistory}
                 onUpdateFeriaConfig={handleUpdateFeriaConfig}
-                onClearSales={handleClearSales}
+                onFinalizeFeria={archiveCurrentFeria}
+                onActivateHistoricalFeria={activateHistoricalFeria}
                 onLogout={handleLogout}
               />
             ) : (
               <SalesTPV
-                feriaConfig={feriaConfig}
+                activeFeriaConfig={activeFeriaConfig}
                 onAddSale={handleAddSale}
                 onLogout={handleLogout}
               />
@@ -761,6 +1058,7 @@
         throw new Error("Could not find root element to mount to");
       }
 
+      // Using global ReactDOM
       const root = ReactDOM.createRoot(rootElement);
       root.render(
         <React.StrictMode>
