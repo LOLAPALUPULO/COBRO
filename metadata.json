@@ -1,0 +1,5 @@
+{
+  "name": "PWA Feria Ventas",
+  "description": "Una PWA para registrar ventas en ferias/eventos, con distinción de método de pago y control de usuario.",
+  "requestFramePermissions": []
+}
