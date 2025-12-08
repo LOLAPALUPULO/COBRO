@@ -1,6 +1,5 @@
-
 {
-  "name": "LOLA VENTAS",
+  "name": " LOLA VENTAS pruebas",
   "description": "A web application for registering sales at an event (Feria), calculating quantities and totals, with administrator and sales user roles, including historical feria data management.",
   "requestFramePermissions": []
 }
